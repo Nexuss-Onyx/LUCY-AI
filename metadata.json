@@ -1,0 +1,6 @@
+{
+  "name": "Lucy AI",
+  "description": "Amharic real-time voice assistant powered by Gemini Live API voice models with a sleek light-mode live orb interface.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

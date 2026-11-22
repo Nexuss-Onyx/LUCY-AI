@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", "Noto Sans Ethiopic", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-ethiopic: "Noto Sans Ethiopic", "Plus Jakarta Sans", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer base {
+  html,
+  body {
+    color-scheme: light;
+    background-color: #fafafa;
+    color: #0f172a;
+    font-family: var(--font-sans);
+  }
+}
+
+/* Smooth scrollbar for transcript drawer */
+.lucy-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.lucy-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.lucy-scroll::-webkit-scrollbar-thumb {
+  background: rgba(15, 23, 42, 0.12);
+  border-radius: 9999px;
+}
+.lucy-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(15, 23, 42, 0.22);
+}
