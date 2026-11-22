@@ -2,10 +2,8 @@ import { FormEvent, useEffect, useState } from 'react';
 import {
   AlertCircle,
   FileText,
-  History,
   Keyboard,
-  Mic,
-  MicOff,
+  Menu,
   Phone,
   PhoneOff,
   Plus,
@@ -111,7 +109,6 @@ export default function App() {
       setSessions((prev) => [currentRec, ...prev]);
     }
     clearTranscript();
-    // Load selected session messages into current
     for (const m of session.messages) {
       messages.push(m);
     }
@@ -127,15 +124,21 @@ export default function App() {
 
   return (
     <div className="h-[100dvh] w-full overflow-hidden flex flex-col bg-[#FAFAFA] text-slate-950 relative">
-      {/* Top Header: Centered ሉሲ AI brand with + New Session and History icon */}
+      {/* Top Header: Centered ሉሲ AI brand, with + New Session, History/Transcript, and Hamburger menu on the right */}
       <header className="shrink-0 bg-white/90 backdrop-blur-md border-b border-slate-200/80 z-20">
         <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between gap-4">
+          <div className="w-10" />
+
+          <h1 className="text-base sm:text-lg font-bold tracking-tight text-slate-950 text-center">
+            ሉሲ AI
+          </h1>
+
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={handleStartNewSession}
               aria-label="Start new session"
-              title="Start new session"
+              title="Start new session (+)"
               className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-700 text-white hover:bg-sky-800 transition-colors shadow-xs cursor-pointer"
             >
               <Plus className="h-4 w-4" />
@@ -143,32 +146,13 @@ export default function App() {
             <button
               type="button"
               onClick={() => setShowTranscript(true)}
-              aria-label="View history & transcripts"
-              title="History"
-              className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-slate-300 bg-white text-slate-800 hover:bg-slate-100 transition-colors shadow-xs cursor-pointer"
+              aria-label="Open transcript and history sidebar"
+              title="Transcript & History"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-300 bg-white text-slate-800 hover:bg-slate-100 transition-colors shadow-xs cursor-pointer"
             >
-              <History className="h-4 w-4" />
-              {sessions.length > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-sky-700 text-[9px] font-bold text-white">
-                  {sessions.length}
-                </span>
-              )}
+              <Menu className="h-4 w-4" />
             </button>
           </div>
-
-          <h1 className="text-base sm:text-lg font-bold tracking-tight text-slate-950 text-center">
-            ሉሲ AI
-          </h1>
-
-          <button
-            type="button"
-            onClick={() => setShowTranscript(true)}
-            aria-label="Open transcript"
-            className="flex items-center gap-1.5 h-9 px-3.5 rounded-xl border border-slate-300 bg-white text-xs font-semibold text-slate-900 hover:bg-slate-100 transition-colors shadow-xs cursor-pointer"
-          >
-            <FileText className="h-3.5 w-3.5 text-sky-700" />
-            <span>Transcript{messages.length > 0 ? ` (${messages.length})` : ''}</span>
-          </button>
         </div>
       </header>
 
@@ -200,7 +184,7 @@ export default function App() {
           )}
         </AnimatePresence>
 
-        {/* TikTok-style Floating Real-Time Subtitles / Captions (bottom-to-top fade & translate) */}
+        {/* TikTok-style Floating Real-Time Subtitles / Captions */}
         <div className="absolute inset-x-6 bottom-28 z-10 pointer-events-none flex flex-col items-center gap-2 overflow-hidden max-h-40">
           <AnimatePresence>
             {activeCaption && (
@@ -236,7 +220,7 @@ export default function App() {
           />
         </div>
 
-        {/* Bottom Dock: Transcript Icon (replacing voice icon), Call/End, and Keyboard Toggle */}
+        {/* Bottom Dock: Transcript Icon, Call/End, and Keyboard Toggle */}
         <div className="shrink-0 w-full max-w-xl mx-auto flex flex-col items-center gap-2.5 pb-2 z-20">
           {showKeyboardInput && (
             <motion.form
@@ -315,15 +299,15 @@ export default function App() {
           </div>
         </div>
 
-        {/* Transcript / History Overlay Drawer (Fade-in / Fade-out from bottom to top with close button) */}
+        {/* Transcript / History Overlay Sidebar (Fade-in / Fade-out with search and session list) */}
         <AnimatePresence>
           {showTranscript && (
             <motion.div
-              initial={{ opacity: 0, y: '100%' }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: '100%' }}
+              initial={{ opacity: 0, x: '100%' }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: '100%' }}
               transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute inset-0 z-50 bg-slate-950/40 backdrop-blur-sm flex flex-col justify-end p-2 sm:p-6"
+              className="absolute inset-0 z-50 bg-slate-950/40 backdrop-blur-sm flex justify-end p-0 sm:p-4"
             >
               <TranscriptAndHistoryView
                 messages={messages}
