@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useState } from 'react';
 import {
   AlertCircle,
   FileText,
+  History,
   Keyboard,
   Menu,
   Phone,
@@ -12,7 +13,9 @@ import {
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { LiveVoiceOrb } from './components/LiveVoiceOrb';
-import { TranscriptAndHistoryView, TranscriptMessage } from './components/TranscriptAndHistoryView';
+import { TranscriptMessage } from './components/TranscriptView';
+import { HistorySidebar } from './components/HistorySidebar';
+import { TranscriptModal } from './components/TranscriptModal';
 import { useLucyLiveSession } from './hooks/useLucyLiveSession';
 
 interface SessionRecord {
@@ -23,7 +26,8 @@ interface SessionRecord {
 }
 
 export default function App() {
-  const [showTranscript, setShowTranscript] = useState<boolean>(false);
+  const [showHistorySidebar, setShowHistorySidebar] = useState<boolean>(false);
+  const [showTranscriptModal, setShowTranscriptModal] = useState<boolean>(false);
   const [showKeyboardInput, setShowKeyboardInput] = useState<boolean>(false);
   const [textInput, setTextInput] = useState<string>('');
   const [floatingTranscripts, setFloatingTranscripts] = useState<
@@ -117,6 +121,10 @@ export default function App() {
     );
   };
 
+  const handleDeleteSession = (sessionId: string) => {
+    setSessions((prev) => prev.filter((s) => s.id !== sessionId));
+  };
+
   const activeCaption =
     interimAssistantText ||
     interimUserText ||
@@ -124,15 +132,15 @@ export default function App() {
 
   return (
     <div className="h-[100dvh] w-full overflow-hidden flex flex-col bg-[#FAFAFA] text-slate-950 relative">
-      {/* Top Header: Hamburger on left, Centered ሉሲ AI brand, + and History on the right */}
+      {/* Top Header: Hamburger on left, Centered ሉሲ AI brand, + and History icon on right */}
       <header className="shrink-0 bg-white/90 backdrop-blur-md border-b border-slate-200/80 z-20">
         <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={() => setShowTranscript(true)}
-              aria-label="Open transcript and history sidebar"
-              title="Menu / History"
+              onClick={() => setShowHistorySidebar(true)}
+              aria-label="Open chat history sidebar"
+              title="Menu"
               className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-300 bg-white text-slate-800 hover:bg-slate-100 transition-colors shadow-xs cursor-pointer"
             >
               <Menu className="h-4 w-4" />
@@ -155,12 +163,12 @@ export default function App() {
             </button>
             <button
               type="button"
-              onClick={() => setShowTranscript(true)}
-              aria-label="Open transcript"
-              title="History"
+              onClick={() => setShowTranscriptModal(true)}
+              aria-label="Open transcript window"
+              title="History / Transcript"
               className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-300 bg-white text-slate-800 hover:bg-slate-100 transition-colors shadow-xs cursor-pointer"
             >
-              <FileText className="h-4 w-4 text-sky-700" />
+              <History className="h-4 w-4 text-sky-700" />
             </button>
           </div>
         </div>
@@ -268,8 +276,8 @@ export default function App() {
           <div className="flex items-center justify-center gap-5">
             <button
               type="button"
-              onClick={() => setShowTranscript(true)}
-              aria-label="Open transcript"
+              onClick={() => setShowTranscriptModal(true)}
+              aria-label="Open transcript window"
               title="Transcript"
               className="flex h-12 w-12 items-center justify-center rounded-full border border-slate-300 bg-white text-slate-800 hover:bg-slate-100 hover:border-slate-400 shadow-sm transition-all cursor-pointer"
             >
@@ -309,30 +317,26 @@ export default function App() {
           </div>
         </div>
 
-        {/* Full-Screen Central Slide-Up Transcript & History View with Close X under top navigation */}
-        <AnimatePresence>
-          {showTranscript && (
-            <motion.div
-              initial={{ opacity: 0, y: '100%' }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: '100%' }}
-              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute inset-0 z-50 bg-[#FAFAFA] flex flex-col"
-            >
-              <TranscriptAndHistoryView
-                messages={messages}
-                interimUserText={interimUserText}
-                interimAssistantText={interimAssistantText}
-                onClear={clearTranscript}
-                onSelectStarterPrompt={handleStarterPrompt}
-                onNewSession={handleStartNewSession}
-                sessions={sessions}
-                onSelectSession={handleSelectSession}
-                onClose={() => setShowTranscript(false)}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Isolated History Sidebar sliding from left to right */}
+        <HistorySidebar
+          isOpen={showHistorySidebar}
+          onClose={() => setShowHistorySidebar(false)}
+          sessions={sessions}
+          onSelectSession={handleSelectSession}
+          onNewSession={handleStartNewSession}
+          onDeleteSession={handleDeleteSession}
+        />
+
+        {/* Isolated Transcript Modal with top-right close X icon */}
+        <TranscriptModal
+          isOpen={showTranscriptModal}
+          onClose={() => setShowTranscriptModal(false)}
+          messages={messages}
+          interimUserText={interimUserText}
+          interimAssistantText={interimAssistantText}
+          onClear={clearTranscript}
+          onSelectStarterPrompt={handleStarterPrompt}
+        />
       </main>
     </div>
   );
