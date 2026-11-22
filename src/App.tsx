@@ -124,10 +124,20 @@ export default function App() {
 
   return (
     <div className="h-[100dvh] w-full overflow-hidden flex flex-col bg-[#FAFAFA] text-slate-950 relative">
-      {/* Top Header: Centered ሉሲ AI brand, with + New Session, History/Transcript, and Hamburger menu on the right */}
+      {/* Top Header: Hamburger on left, Centered ሉሲ AI brand, + and History on the right */}
       <header className="shrink-0 bg-white/90 backdrop-blur-md border-b border-slate-200/80 z-20">
         <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between gap-4">
-          <div className="w-10" />
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setShowTranscript(true)}
+              aria-label="Open transcript and history sidebar"
+              title="Menu / History"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-300 bg-white text-slate-800 hover:bg-slate-100 transition-colors shadow-xs cursor-pointer"
+            >
+              <Menu className="h-4 w-4" />
+            </button>
+          </div>
 
           <h1 className="text-base sm:text-lg font-bold tracking-tight text-slate-950 text-center">
             ሉሲ AI
@@ -146,11 +156,11 @@ export default function App() {
             <button
               type="button"
               onClick={() => setShowTranscript(true)}
-              aria-label="Open transcript and history sidebar"
-              title="Transcript & History"
+              aria-label="Open transcript"
+              title="History"
               className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-300 bg-white text-slate-800 hover:bg-slate-100 transition-colors shadow-xs cursor-pointer"
             >
-              <Menu className="h-4 w-4" />
+              <FileText className="h-4 w-4 text-sky-700" />
             </button>
           </div>
         </div>
@@ -299,15 +309,15 @@ export default function App() {
           </div>
         </div>
 
-        {/* Transcript / History Overlay Sidebar (Fade-in / Fade-out with search and session list) */}
+        {/* Full-Screen Central Slide-Up Transcript & History View with Close X under top navigation */}
         <AnimatePresence>
           {showTranscript && (
             <motion.div
-              initial={{ opacity: 0, x: '100%' }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: '100%' }}
-              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute inset-0 z-50 bg-slate-950/40 backdrop-blur-sm flex justify-end p-0 sm:p-4"
+              initial={{ opacity: 0, y: '100%' }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: '100%' }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="absolute inset-0 z-50 bg-[#FAFAFA] flex flex-col"
             >
               <TranscriptAndHistoryView
                 messages={messages}
